@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors')
 
 const actionRouter = require('./routes/actionRouter');
-// const projectRouter = require('./routes/projectRouter');
+const projectRouter = require('./routes/projectRouter');
 
 const server = express();
 
@@ -17,6 +17,6 @@ server.use(cors());
 
 
 server.use('/api/actions/', actionRouter);
-// server.use('/api/projects/', projectRouter);
+server.use('/api/projects/', projectRouter);
 
 module.exports = server;
