@@ -42,12 +42,12 @@ router.post('/', (req, res) => {
         });
 });
 
-router.post('/:id/actions', (req,res) => {
-    const projectID = req.params.id
-    const newInfo = req.body
+router.post('/:id/actions', validateProject, (req,res) => {
+    const projectID = req.params.id;
+    const newInfo = req.body;
 
     newAction = { project_id: projectID, ...newInfo };
-    console.log(newAction);
+    // console.log(newAction);
 
     Actions.insert(newAction)
         .then(added => {
@@ -92,6 +92,31 @@ router.delete('/:id', (req, res) => {
         });
 });
 
+function validateProject(req, res, next) {
+    const projectID = Number(req.params.id);
+    // console.log(projectID, typeof projectID)
+    // console.log(`validating project ID ${projectID}`);
+
+    Projects.get()
+        .then(projectList => {
+            const validProjects = projectList.map(project => project.id);
+            // console.log(validProjects);
+            // console.log(validProjects[0], typeof validProjects[0]);
+            // console.log(validProjects.includes(projectID));
+
+            if(validProjects.includes(projectID)) {
+                next();
+            } else {
+                res.status(404).json({ message: `could not locate project ID ${projectID}`})
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ message: `error validating project ID ${projectID}`});
+        });
+
+    // next();
+}
 
 
 module.exports = router;
